@@ -37,7 +37,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -48,13 +48,14 @@ jobs:
             cd frontend
             npm install
             npm run build
+            npm audit fix --audit-level=critical --force
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
 
   build-backend:
     docker:
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -65,13 +66,14 @@ jobs:
             cd backend
             npm install
             npm run build
+            npm audit fix --audit-level=critical --force
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
   test-frontend:
     docker:
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -87,7 +89,7 @@ jobs:
                 
   test-backend:
     docker:
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -103,7 +105,7 @@ jobs:
             
   scan-frontend:
     docker:
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -115,11 +117,11 @@ jobs:
           name: frontend scan
           command: |
             cd frontend
-            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical
 
   scan-backend:
     docker:
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -131,7 +133,7 @@ jobs:
           name: backend scan
           command: |
             cd backend
-            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical
 
   deploy-infrastructure:
     docker:
@@ -193,7 +195,7 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: circleci/node:14.17.3
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
