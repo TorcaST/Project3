@@ -398,7 +398,7 @@ jobs:
 
             # promote
             aws cloudformation deploy \
-              --template-file cloudfront.yml \
+              --template-file .circleci/files/cloudfront.yml \
               --stack-name production-${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides WorkflowID=$CIRCLE_WORKFLOW_ID \
               --tags project=udapeople
