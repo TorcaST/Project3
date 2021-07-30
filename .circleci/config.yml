@@ -242,12 +242,9 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            cat .env
-            echo "PORT: " $TYPEORM_PORT
-            echo "HOST: " $TYPEORM_HOST
-            npm run migrations 2>&1 | tee migration-log.txt
+            npm run migrations > migration-log.txt
 
-            if cat migration-log.txt | grep "has been executed successfully"; then
+            if cat migration-log.txt | grep "No migrations are pending"; then
               curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
                 --request PUT --data "1" \
                 https://api.memstash.io/values/migration-"${CIRCLE_WORKFLOW_ID}"
