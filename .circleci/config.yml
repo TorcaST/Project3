@@ -242,11 +242,6 @@ jobs:
             echo "HOST: " $TYPEORM_HOST
             npm run migrations 2>&1 | tee migration-log.txt
 
-            status_code="${PIPESTATUS[0]}"
-            if [[ ! "${status_code}" == 0 ]]; then
-              return 1
-            fi
-
             if cat migration-log.txt | grep "has been executed successfully"; then
               curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
                 --request PUT --data "1" \
@@ -328,7 +323,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-      - image: circleci/node:13.8.0
+      - image: python:3.7-alpine3.12 
     steps:
       # Checkout code from git
       - checkout
@@ -358,9 +353,9 @@ jobs:
             curl -s "${URL}"
             if curl -s ${URL} | grep "Welcome"
             then
-            return 1
+            exit 1
             else
-            return 0
+            exit 0
             fi
       # Here's where you will add some code to rollback on failure  
 
