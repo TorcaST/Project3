@@ -397,7 +397,7 @@ jobs:
 
             # save oldworkflowid for the cleanup phase
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
-              --request PUT --data "${OldWorkflowID}" \
+              --request PUT --data ${OldWorkflowID} \
                 https://api.memstash.io/values/oldworkflowid
 
             # promote
@@ -418,15 +418,16 @@ jobs:
       # Checkout code from git
       - checkout
       - run:
-          name: Get old stack workflow id
+          name: Get old stack workflow id and remove old stacks and files
           command: |
             export OldWorkflowID=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" \
              --request GET https://api.memstash.io/values/oldworkflowid)
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-      - run:
-          name: Remove old stacks and files
-          command: |
+            
+            echo "${OldWorkflowID}"
+            echo "${STACKS}"
+
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
